@@ -13,7 +13,209 @@
 
     .git/ 이포함된 폴더 전체를 백업하면 복사본 폴더 복사하면 완벽하게 버전까지 포함해서 복구할 수 있다  
 
-## 1
+### 작성자 정보 넣기
+
+    git config --global user.name code-server
+    git config --global user.email kddddds@naver.com
+    git init    # 현재 디렉토리 버전관리 프로젝트 폴더 지정
+        # .git 폴더 생성 버전관리 정보 저장 디렉토리
+        # f1.txt 만들고 source : 1 넣기
+    git status
+        Untracked files:
+            f1.txt
+    git add f1.txt  git f1.txt 추적하라고 명령
+        Change to be committed:
+            new file:   f1.txt
+    git commit   # nano 실행 됨 정보 알려주는곳 현재 버전 메세지 입력 1입력
+    git log  # 입력한 내용 출력
+        f1.txt  수정 source : 2
+    git status
+        Changes not staged for commit:
+            modified: f1.txt
+    git add f1.txt  # 다시 버전관리 하기 최초만들고 add 수정하고나서도 add
+    git commit      # 2 입력 변경이류 적는곳
+    git log         # 버전정보 나옴
+
+    nano f2.txt     # f2.txt 만들고 source : 1 입력
+    git add f2.txt
+    git commit      # 버전정보 넣기 source : 1
+
+    # f1.txt f2.txt 모두 수정
+    # f1.txt f1.txt : 2     f2.txt f2.txt : 2
+    git status 
+        Changes not staged for commit:
+        (use "git add <file>..." to update what will be committed)
+        (use "git restore <file>..." to discard changes in working directory)
+                modified:   f1.txt
+                modified:   f2.txt
+
+    git add f1.txt
+    git status
+        Changes to be committed:
+        (use "git restore --staged <file>..." to unstage)
+                modified:   f1.txt
+
+        Changes not staged for commit:  # 커밋이 되지않을것이다 add한 파일만 commit
+        (use "git add <file>..." to update what will be committed)
+        (use "git restore <file>..." to discard changes in working directory)
+                modified:   f2.txt
+        # 커밋할 파일만 선택해서 커밋할수 있다
+        # 커밋 대기상태 staged area
+        # stage 커밋을대기하기위해 가는곳 
+        # repository 커밋되어 저장되어지는곳
+
+    # 차이점을 알수있고 
+    # 과거로 돌아갈수 있다
+    git log -p # 커밋 사이의 소스 차이점을 알수있다
+
+        commit 7c02410672182ef8d9a2b36385d37699db323220 (HEAD -> master)
+        Author: code-server <kddddds@naver.com>
+        Date:   Wed Feb 9 02:57:27 2022 +0900
+
+            4[f1.txt] # 가장마지막
+
+        diff --git a/f1.txt b/f1.txt
+        index 2456b16..9462317 100644
+        --- a/f1.txt    # 3[f2.txt] 에서의 파일내용             # 3과 4사이의 차이점
+        +++ b/f1.txt    # 4[f1.txt] 파일내용
+        @@ -1 +1 @@
+        -source : 2     # 3[f2.txt] 에서의 파일내용
+        +f1.txt : 2     # 4[f1.txt] 파일내용
+
+        commit 3dc4577e807ea74af5b57c069f9f65871bf24bc7
+        Author: code-server <kddddds@naver.com>
+        Date:   Wed Feb 9 02:48:47 2022 +0900
+
+            3[f2.txt]
+
+        diff --git a/f2.txt b/f2.txt
+        new file mode 100644
+        index 0000000..2456b16
+        --- /dev/null   # 이전에선 존재하지 않았음
+        +++ b/f2.txt    # 현재버전에서 f2.txt 파일 추가됨
+        @@ -0,0 +1 @@
+        +source : 2     # 내용은 source2 였음
+
+        commit 90786cd623d42140476dc8e83de74028fd96c8f8
+        Author: code-server <kddddds@naver.com>
+        Date:   Wed Feb 9 02:31:31 2022 +0900
+
+            2[f1.txt]
+
+        diff --git a/f1.txt b/f1.txt
+        index e2eaf76..2456b16 100644
+        --- a/f1.txt    # 이전버전에도 존재
+        +++ b/f1.txt    # 현재버전에도 존재
+        @@ -1 +1 @@
+        -source : 1     # 이전버전에선 source 1
+        +source : 2     # 현재 버전에선 source 2
+
+        commit ef3e3161899b8773277140321b488449a85fd257 # 커밋의 고유아이디
+        Author: code-server <kddddds@naver.com>
+        Date:   Wed Feb 9 02:30:38 2022 +0900
+
+            1[f1.txt]
+
+        diff --git a/f1.txt b/f1.txt
+        new file mode 100644
+        index 0000000..e2eaf76
+        --- /dev/null
+        +++ b/f1.txt
+        @@ -0,0 +1 @@
+        +source : 1
+
+    git diff ef3e3161899b8773277140321b488449a85fd257
+
+    nano f1.txt # f1.txt 파일수정
+    git diff # 커밋하기전 변경내용 리뷰
+        index 9462317..e3a30dc 100644
+        --- a/f1.txt
+        +++ b/f1.txt
+        @@ -1 +1 @@
+        -f1.txt : 2     # 변경내용 확인
+        +f1.txt : 5
+        diff --git a/f2.txt b/f2.txt
+
+    git add f1.txt
+    git commit
+    git log -p
+
+
+    # 과거로 되돌리기
+    # reset VS revert
+    # 관리하는 디렉토리 .git/ 포함 백업후 작업
+        cp -pR /config/workspace/git_ebesesk/생활코딩/. /config/workspace/git_ebesesk/생활코딩2/
+            -h 심볼릭 링크파일 복사
+            -p 파일권한 복사
+            -R 하위 디렉토리 복사
+
+    5 와 4를 삭제하고 3으로 돌아가고싶다 reset
+    git reset 3dc4577e807ea74af5b57c069f9f65871bf24bc7 --hard <- 3번째 아이디 4, 5 삭제됨
+
+        commit 64dda4ca82014a50f73877d66660135a9261be2a (HEAD -> master)
+        Author: code-server <kddddds@naver.com>
+        Date:   Wed Feb 9 10:24:57 2022 +0900
+
+            5[f1.txt]
+
+        commit 7c02410672182ef8d9a2b36385d37699db323220
+        Author: code-server <kddddds@naver.com>
+        Date:   Wed Feb 9 02:57:27 2022 +0900
+
+            4[f1.txt]
+
+        commit 3dc4577e807ea74af5b57c069f9f65871bf24bc7
+        Author: code-server <kddddds@naver.com>
+        Date:   Wed Feb 9 02:48:47 2022 +0900
+
+            3[f2.txt]
+
+        commit 90786cd623d42140476dc8e83de74028fd96c8f8
+        Author: code-server <kddddds@naver.com>
+        Date:   Wed Feb 9 02:31:31 2022 +0900
+
+            2[f1.txt]
+
+        commit ef3e3161899b8773277140321b488449a85fd257
+        Author: code-server <kddddds@naver.com>
+        Date:   Wed Feb 9 02:30:38 2022 +0900
+
+            1[f1.txt]
+
+    # 버전 4 5 삭제한것처럼 보이지만 데이터는 남아있다.
+    # 원격저장소 협업 저장소 버전들을 공유 reset 하면 안됨
+    git revert 3dc4577e807ea74af5b57c069f9f65871bf24bc7 <- 커밋취소하면서 새로 버전 만듦
+
+    # git 명령어 빈도수
+        # commit
+        push
+        pull
+        # clone
+        checkout
+        # add
+        branch
+        # log
+        # diff
+        fetch
+        merge
+        # init
+        # status
+        # reset
+        # revert
+    nano f1.txt
+    git add f1.txt
+    git commit
+    #########################################################
+    git commit --amend      #가장 최근의 commit 메세지 수정
+    git rebase -i HEAD~3    # 위에서 세번째 커밋 메세지 수정
+    git reset HEAD~1        # 가장 최근 commit 삭제
+    git commit -a           # add명령어 없이 자동으로 add
+    git commit -am "11"     # 자동 add, 에디터없이 메세지 넣을수있음
+    ##########################################################
+    # 버전관리하는 이유 백업 backup
+    # 버전관리하는 디렉토리 클라우드 서비스에 올리기 인터넷상에 저장
+
+## 2
 
     work1.txt  1  
     work2.txt  2  
@@ -173,7 +375,8 @@
         get checkout e83c5163316f89bfbde7d9ab23ca2e25604af290
     프로젝트 저장하기
         github public 만들기
-        repository…or push an existing repository from the command line
+        repository
+        …or push an existing repository from the command line
             git remote add origin https://github.com/ebesesk/mycode.git
             git branch -M main
             git push -u origin main
@@ -191,7 +394,9 @@
         -> origin  https://github.com/ebesesk/mycode.git (fetch)
            origin  https://github.com/ebesesk/mycode.git (push)
         나의 로컬저장소와 연결된 기본 원격저장소
-        git remote add mycode http://github.com/ebesesk/mycode.git
+        git remote add origin http://github.com/ebesesk/mycode.git
         git remote --help
-        git remote remove origin
-        
+        git branch -M main
+        git push -u origin main
+        # -u 옵션 로컬저장소  branch 와 원격저장소 마스터 branch를 연결해서 다음부턴 자동으로 넘어감 한번만 실행
+        git commit -am "README.md 추가"
