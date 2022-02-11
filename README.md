@@ -400,3 +400,7 @@
         git push -u origin main
         # -u 옵션 로컬저장소  branch 와 원격저장소 마스터 branch를 연결해서 다음부턴 자동으로 넘어감 한번만 실행
         git commit -am "README.md 추가"
+    다운받기
+        mkdir mycode
+        cd mycode
+        git clone https://github.com/ebesesk/mycode.git .
